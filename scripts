@@ -1,0 +1,28 @@
+alias x='exit'
+
+#Compile and Execute
+csource() {
+	[[ $1 ]]	|| { echo "Missing operand" >&2; return 1; }
+	[[ -r $1 ]]	|| { printf "File %s does not exist or is not readable\n" "$1" >&2; return 1; }
+	local output_path=${TMPDIR:-/tmp}/${1##*/};
+	gcc "$1" -o "$output_path" && "$output_path";
+	rm "$output_path";
+	return 0;
+}
+
+#calc
+calc() {
+	echo "scale=3;$@" | bc -l
+}
+
+#Compile and Execute quotes.c | Output with Cowsay
+function plain_quote(){
+	gcc ~/Dropbox/Git/Scripts/my_quotes.c -o ~/Dropbox/Git/Scripts/my_quotes.out
+	~/Dropbox/Git/Scripts/my_quotes.out "$@";
+}
+
+function quote(){
+	plain_quote "$@" | cowsay -f turtle
+}
+
+quote
